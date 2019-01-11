@@ -25,12 +25,15 @@ public class MnistController extends RPCControllerBase {
     private static final Logger LOGGER= LoggerFactory.getLogger(MnistController.class);
 
 
-    ResponseEntity<String> getCrossOriginResponse(@Nullable String responseObject) {
+    private ResponseEntity<String> getCrossOriginResponse(@Nullable String responseObject) {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Access-Control-Allow-Origin", "*");
 
-        return new ResponseEntity<>(
-                computeEngine.retriveResult(responseObject, String.class, MAX_TIME_OUT), headers, HttpStatus.OK);
+        if (responseObject == null) {
+            return new ResponseEntity<>("", headers, HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>(responseObject, headers, HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.POST, path = "/recognize")
