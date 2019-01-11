@@ -4,18 +4,21 @@ import com.thoughtworks.nnapi.amqpservice.AmqpComputeEngine;
 import com.thoughtworks.nnapi.model.IntegerResult;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.*;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
 
 public class SimpleAdderControllerTest {
 
-    private static final String returnId = "asc123";
+    private static final String RETURN_ID = "asc123";
 
     @InjectMocks
-    SimpleAdderController simpleAdderController;
+    private SimpleAdderController simpleAdderController;
 
     @Mock
-    AmqpComputeEngine computeEngine;
+    private AmqpComputeEngine computeEngine;
 
     @Before
     public void init() {
@@ -26,7 +29,7 @@ public class SimpleAdderControllerTest {
     public void sendMsgShouldCommitData() {
 
 
-        Mockito.doReturn(returnId).when(computeEngine).commitCalculate(
+        Mockito.doReturn(RETURN_ID).when(computeEngine).commitCalculate(
                 Mockito.anyString(), Mockito.anyString());
 
         simpleAdderController.sendMsg(1, 2);
@@ -37,9 +40,8 @@ public class SimpleAdderControllerTest {
 
     @Test
     public void sendMsgShouldEventuallyReceiveData() {
-//        ArgumentCaptor<String> idCapture = ArgumentCaptor.forClass(String.class);
 
-        Mockito.doReturn(returnId).when(computeEngine).commitCalculate(
+        Mockito.doReturn(RETURN_ID).when(computeEngine).commitCalculate(
                 Mockito.anyString(), Mockito.anyString());
 
         Mockito.doReturn(null).when(computeEngine).retriveResult(
@@ -47,13 +49,8 @@ public class SimpleAdderControllerTest {
 
         simpleAdderController.sendMsg(1, -2);
 
-//        Mockito.verify(computeEngine, Mockito.times(1)).commitCalculate(
-//                Mockito.eq("[1,-2]"), Mockito.eq("add"), idCapture.capture());
-//
-//        String id = idCapture.getValue();
-
         Mockito.verify(computeEngine, Mockito.times(1)).retriveResult(
-                Mockito.eq(returnId), Mockito.eq(IntegerResult.class), Mockito.longThat(x -> x < 10000));
+                Mockito.eq(RETURN_ID), Mockito.eq(IntegerResult.class), Mockito.longThat(x -> x < 10000));
     }
 
 }

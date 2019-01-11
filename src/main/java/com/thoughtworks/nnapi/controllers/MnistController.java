@@ -2,7 +2,8 @@ package com.thoughtworks.nnapi.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.thoughtworks.nnapi.model.IntegerResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -15,7 +16,9 @@ import java.io.IOException;
 public class MnistController extends RPCControllerBase {
 
     // 1MB
-    private final static long MAX_IMAGE_SIZE_IN_BYTE = 1024 * 1024;
+    private static final long MAX_IMAGE_SIZE_IN_BYTE = 1024 * 1024;
+
+    private static final Logger LOGGER= LoggerFactory.getLogger(MnistController.class);
 
     @RequestMapping(method = RequestMethod.POST, path = "/recognize")
     String sendMsg(
@@ -28,19 +31,19 @@ public class MnistController extends RPCControllerBase {
             return null;
         }
 
-        byte data[] = null;
+        byte[] data = null;
 
         try {
             data = image.getBytes();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.warn(e.getMessage());
         }
 
         if (data == null) {
             return null;
         }
 
-        byte params[][] = {data};
+        byte[][] params = {data};
 
         String requestParamJSONString;
 

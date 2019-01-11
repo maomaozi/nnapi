@@ -14,5 +14,5 @@ public class RPCControllerBase {
 
 
     @Autowired
-    AmqpComputeEngine computeEngine;
+    protected AmqpComputeEngine computeEngine;
 }

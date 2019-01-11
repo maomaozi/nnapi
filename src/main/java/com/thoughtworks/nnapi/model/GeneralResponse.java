@@ -3,11 +3,11 @@ package com.thoughtworks.nnapi.model;
 
 public class GeneralResponse {
     private Boolean status;
-    private String Message;
+    private String message;
 
     public GeneralResponse(Boolean status, String message) {
         this.status = status;
-        Message = message;
+        this.message = message;
     }
 
     public void setStatus(Boolean status) {
@@ -15,7 +15,7 @@ public class GeneralResponse {
     }
 
     public void setMessage(String message) {
-        Message = message;
+        this.message = message;
     }
 
     public Boolean getStatus() {
@@ -23,6 +23,6 @@ public class GeneralResponse {
     }
 
     public String getMessage() {
-        return Message;
+        return message;
     }
 }

@@ -8,8 +8,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.UUID;
-
 
 @RestController
 public class SimpleAdderController extends RPCControllerBase {
@@ -22,7 +20,7 @@ public class SimpleAdderController extends RPCControllerBase {
 
         ObjectMapper objectMapper = new ObjectMapper();
 
-        int requestParamArray[] = {lhs, rhs};
+        int[] requestParamArray = {lhs, rhs};
 
         String requestParamJSONString;
 

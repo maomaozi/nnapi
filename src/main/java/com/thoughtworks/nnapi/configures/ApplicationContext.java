@@ -11,6 +11,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ApplicationContext {
 
+    private static final String RECV_METHOD_NAME = "receiveMessage";
+
     @Value("${amqp.queuename}")
     private String amqpQueueName;
 
@@ -29,8 +31,6 @@ public class ApplicationContext {
     @Value("${amqp.connect.password}")
     private String amqpPassword;
 
-
-    private static final String RECV_METHOD_NAME = "receiveMessage";
 
     /*
      * 配置MQ连接信息

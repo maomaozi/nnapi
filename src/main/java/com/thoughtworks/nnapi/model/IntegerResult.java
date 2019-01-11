@@ -1,6 +1,9 @@
 package com.thoughtworks.nnapi.model;
 
 public class IntegerResult {
+
+    private int value;
+
     public IntegerResult(int value) {
         this.value = value;
     }
@@ -12,6 +15,4 @@ public class IntegerResult {
     public void setValue(int value) {
         this.value = value;
     }
-
-    public int value;
 }

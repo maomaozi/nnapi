@@ -17,24 +17,27 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArraySet;
+
 
 @Component
 public class AmqpComputeEngine implements ComputeEngine {
 
-    @Autowired
-    AmqpTemplate template;
+    private static Map<String, byte[]> results = new Hashtable<>();
+    private static Set<String> deniedIdx = new CopyOnWriteArraySet<>();
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(AmqpComputeEngine.class);
+
+    @Autowired
+    private AmqpTemplate template;
 
     @Value("${amqp.exchangename}")
     private String amqpTopicExchangeName;
 
     @Value("${amqp.queuename}")
     private String amqpQueueName;
-
-    private static Map<String, byte[]> results = new Hashtable<>();
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(AmqpComputeEngine.class);
 
     @Override
     public String commitCalculate(String data, String routeKey) {
@@ -59,12 +62,19 @@ public class AmqpComputeEngine implements ComputeEngine {
     )
     )
     public void resultCallback(Message message) {
+        String correlationId = message.getMessageProperties().getCorrelationId();
+
+        if (deniedIdx.contains(correlationId)) {
+            deniedIdx.remove(correlationId);
+            return;
+        }
+
         results.put(message.getMessageProperties().getCorrelationId(), message.getBody());
     }
 
     @Override
     public <T> T retriveResult(String id, Class<T> type, long timeout) {
-        byte data[] = null;
+        byte[] data = null;
 
         long startTime = System.currentTimeMillis();
 
@@ -74,11 +84,12 @@ public class AmqpComputeEngine implements ComputeEngine {
             if (data != null) {
                 break;
             }
-            // TODO: if timeout, something will leave in map forever
+            // TODA: if timeout, something will leave in map forever
             Thread.yield();
         }
 
         if (data == null) {
+            deniedIdx.add(id);
             return null;
         }
 
