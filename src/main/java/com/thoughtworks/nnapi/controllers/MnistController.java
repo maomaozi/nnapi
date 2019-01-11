@@ -4,6 +4,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,33 +24,37 @@ public class MnistController extends RPCControllerBase {
 
     private static final Logger LOGGER= LoggerFactory.getLogger(MnistController.class);
 
+
+    ResponseEntity<String> getCrossOriginResponse(@Nullable String responseObject) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Access-Control-Allow-Origin", "*");
+
+        return new ResponseEntity<>(
+                computeEngine.retriveResult(responseObject, String.class, MAX_TIME_OUT), headers, HttpStatus.OK);
+    }
+
     @RequestMapping(method = RequestMethod.POST, path = "/recognize")
-    String sendMsg(
+    ResponseEntity<String> sendMsg(
             @RequestParam(name = "image") MultipartFile image
     ) {
-
-        ObjectMapper objectMapper = new ObjectMapper();
-
         if (image.getSize() > MAX_IMAGE_SIZE_IN_BYTE) {
-            return null;
+            return getCrossOriginResponse(null);
         }
 
-        byte[] data = null;
+        byte[] data;
 
         try {
             data = image.getBytes();
         } catch (IOException e) {
             LOGGER.warn(e.getMessage());
-        }
-
-        if (data == null) {
-            return null;
+            return getCrossOriginResponse(null);
         }
 
         byte[][] params = {data};
 
         String requestParamJSONString;
 
+        ObjectMapper objectMapper = new ObjectMapper();
         try {
             requestParamJSONString = objectMapper.writeValueAsString(params);
         } catch (JsonProcessingException e) {
@@ -55,6 +63,10 @@ public class MnistController extends RPCControllerBase {
 
         String id = computeEngine.commitCalculate(requestParamJSONString, "mnrc");
 
-        return computeEngine.retriveResult(id, String.class, MAX_TIME_OUT);
+        // for cross origin
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Access-Control-Allow-Origin", "*");
+
+        return getCrossOriginResponse(computeEngine.retriveResult(id, String.class, MAX_TIME_OUT));
     }
 }
