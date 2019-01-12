@@ -1,0 +1,159 @@
+<html>
+
+	<head>
+		<script src="../js/vue.min.js"></script>
+		<script src="../js/vue-resource.min.js"></script>
+		<link href="../css/bar.css" rel="stylesheet" type="text/css" />
+	</head>
+
+	<body>
+
+		<div id="app" style="margin-left: 5%;">
+			<div style="display:inline-block;vertical-align: top; margin-top: 2%;">
+				<div>Draw: {{dragging}} X: {{x}}, Y: {{y}}</div>
+				<canvas id="canvas-1" @mousedown="startDrag" @mousemove="doDrag" width=200px height=200px style="width:200px; height:200px; border:1px solid #c3c3c3">
+					<span>Loading Canvas</span>
+				</canvas>
+			</div>
+
+			<div style="display:inline-block;	vertical-align: top; margin-top: 0.5%;">
+				<div v-for="v in barValues" class="barContainer">
+					<div class="barValue" :style="{width:v.va+'%'}">
+						<b> {{v.i}}: {{v.vb}}%</b>
+					</div>
+				</div>
+
+			</div>
+
+			<div style="margin-top: 1.5%;">
+				Server Status: {{ message }}
+			</div>
+
+			<div>
+				<br />
+				<button v-on:click="checkServer">check server</button>
+				<div>
+					<br />
+				</div>
+				<button v-on:click="resetCanvas">reset canvas</button>
+			</div>
+
+		</div>
+
+
+		<script type="text/javascript">
+
+			new Vue({
+				el: '#app',
+
+				data:{
+					message: "Click to check server",
+					barValues: [
+					{va:15, vb:0, i:0}, {va:15, vb:0, i:1}, {va:15, vb:0, i:2},
+					{va:15, vb:0, i:3}, {va:15, vb:0, i:4}, {va:15, vb:0, i:5},
+					{va:15, vb:0, i:6}, {va:15, vb:0, i:7}, {va:15, vb:0, i:8},
+					{va:15, vb:0, i:9}],
+					dragging: false,
+					x: 0,
+					y: 0,
+					canvas: null,
+					cxt: null,
+				},
+
+				mounted: function () {
+					this.canvas = document.getElementById('canvas-1');
+					this.cxt = this.canvas.getContext('2d');
+					window.addEventListener('mouseup', this.stopDrag);
+
+					this.resetCanvas();
+					this.checkServer();
+				},
+
+				methods:{
+					checkServer: function(event) {
+						this.message = "Checking..."
+						this.$http.get('http://aws.mmaozi.com:8081/').then(
+						function(data){
+							this.message = data.body;
+						},
+						function(res){
+							this.message = "!!! Cannot connect to server !!!";
+						});
+					},
+
+					recognize: function(event) {
+						canvas = document.getElementById("canvas-1");
+
+						self = this;
+
+						canvas.toBlob(function (blob) {
+							fileFormData = new FormData();
+							fileFormData.append('image', blob, 'image.png');
+
+							requestConfig = {
+								headers: {
+									'Content-Type': 'multipart/form-data'
+								},
+							}
+
+							self.$http.post('http://aws.mmaozi.com:8081/recognize', fileFormData, requestConfig).then(
+							function(data) {
+								if (data.body.length >1) {
+									this.message = "Connect Success";
+									values = eval(data.body);
+
+									for (i = 0; i < values.length; i++) {
+										self.$set(self.barValues[i], 'va', values[i] * 85 + 15);
+										self.$set(self.barValues[i], 'vb', Math.round(values[i] * 100));
+									}
+								} else {
+									this.message = data.body;
+								}
+							},
+							function(res){
+								self.message = "Server error";
+							});
+
+						});
+					},
+
+					resetCanvas: function() {
+						this.cxt.fillStyle = "#000000";
+						this.cxt.fillRect(0, 0, 200, 200);
+
+						this.barValue = 20;
+					},
+
+					startDrag(event) {
+						this.dragging = true;
+						this.cxt.beginPath();
+						this.cxt.moveTo(event.clientX - this.canvas.offsetLeft, event.clientY - this.canvas.offsetTop);
+						this.cxt.strokeStyle = '#ffffff'
+						this.cxt.lineWidth = 18;
+					},
+
+					stopDrag() {
+						if(this.dragging) {
+							this.recognize();
+						}
+						this.dragging = false;
+					},
+
+					doDrag(event) {
+						if (this.dragging) {
+							this.cxt.lineTo(event.clientX - this.canvas.offsetLeft, event.clientY - this.canvas.offsetTop);
+							this.cxt.stroke();
+						}
+						
+						this.x = event.clientX - this.canvas.offsetLeft;
+						this.y = event.clientY - this.canvas.offsetTop;
+
+					}
+				}
+			})
+
+		</script>
+
+	</body>
+
+</html>
