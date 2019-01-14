@@ -16,7 +16,7 @@ public class HWGanController extends RPCControllerBase {
 
     @CrossOrigin
     @RequestMapping(path = "/hwgan", method = RequestMethod.POST)
-    public HttpEntity<String> sendMessage(@RequestBody ArrayList<Float> paramList) {
+    public String sendMessage(@RequestBody ArrayList<Float> paramList) {
 
         if (paramList.size() != 132) {
             throw new RequestParamError();
@@ -26,6 +26,6 @@ public class HWGanController extends RPCControllerBase {
 
         String id = computeEngine.commitCalculate(requestParamJSONString, "hwgan");
 
-        return getCrossOriginResponse(computeEngine.retriveResult(id, String.class, MAX_TIME_OUT));
+        return computeEngine.retriveResult(id, String.class, MAX_TIME_OUT);
     }
 }
