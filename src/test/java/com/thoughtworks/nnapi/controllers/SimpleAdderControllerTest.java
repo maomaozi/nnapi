@@ -1,7 +1,6 @@
 package com.thoughtworks.nnapi.controllers;
 
 import com.thoughtworks.nnapi.amqpservice.AmqpComputeEngine;
-import com.thoughtworks.nnapi.model.IntegerResult;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -50,7 +49,7 @@ public class SimpleAdderControllerTest {
         simpleAdderController.sendMsg(1, -2);
 
         Mockito.verify(computeEngine, Mockito.times(1)).retriveResult(
-                Mockito.eq(RETURN_ID), Mockito.eq(IntegerResult.class), Mockito.longThat(x -> x < 10000));
+                Mockito.eq(RETURN_ID), Mockito.eq(String.class), Mockito.longThat(x -> x < 10000));
     }
 
 }
