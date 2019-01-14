@@ -2,7 +2,6 @@ package com.thoughtworks.nnapi.controllers;
 
 import com.thoughtworks.nnapi.Exceptions.RequestParamError;
 import com.thoughtworks.nnapi.tensorbroker.RPCArgBuilder;
-import org.springframework.http.HttpEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
