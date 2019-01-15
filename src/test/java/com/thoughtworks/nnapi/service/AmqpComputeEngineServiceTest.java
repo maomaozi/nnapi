@@ -1,4 +1,4 @@
-package com.thoughtworks.nnapi.amqpservice;
+package com.thoughtworks.nnapi.service;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.Before;
@@ -16,12 +16,12 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 
-public class AmqpComputeEngineTest {
+public class AmqpComputeEngineServiceTest {
     @Mock
     private AmqpTemplate template;
 
     @InjectMocks
-    private AmqpComputeEngine amqpComputeEngine;
+    private ComputeEngineServiceImpl amqpComputeEngine;
 
 
     @Before

@@ -1,6 +1,6 @@
 package com.thoughtworks.nnapi.controllers;
 
-import com.thoughtworks.nnapi.amqpservice.AmqpComputeEngine;
+import com.thoughtworks.nnapi.service.ComputeEngineServiceImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -17,7 +17,7 @@ public class SimpleAdderControllerTest {
     private SimpleAdderController simpleAdderController;
 
     @Mock
-    private AmqpComputeEngine computeEngine;
+    private ComputeEngineServiceImpl computeEngine;
 
     @Before
     public void init() {

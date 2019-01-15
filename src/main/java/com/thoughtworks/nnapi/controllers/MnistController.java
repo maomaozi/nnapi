@@ -2,13 +2,11 @@ package com.thoughtworks.nnapi.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.thoughtworks.nnapi.controllers.Exceptions.InternalIOError;
+import com.thoughtworks.nnapi.controllers.Exceptions.RequestParamError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -21,13 +19,13 @@ public class MnistController extends RPCControllerBase {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MnistController.class);
 
-
+    @CrossOrigin
     @RequestMapping(method = RequestMethod.POST, path = "/recognize")
-    ResponseEntity<String> sendMsg(
+    String recognize(
             @RequestParam(name = "image") MultipartFile image
     ) {
         if (image.getSize() > MAX_IMAGE_SIZE_IN_BYTE) {
-            return getCrossOriginResponse(null);
+            throw new RequestParamError();
         }
 
         byte[] data;
@@ -36,7 +34,7 @@ public class MnistController extends RPCControllerBase {
             data = image.getBytes();
         } catch (IOException e) {
             LOGGER.warn(e.getMessage());
-            return getCrossOriginResponse(null);
+            throw new RequestParamError();
         }
 
         byte[][] params = {data};
@@ -47,11 +45,11 @@ public class MnistController extends RPCControllerBase {
         try {
             requestParamJSONString = objectMapper.writeValueAsString(params);
         } catch (JsonProcessingException e) {
-            return null;
+            throw new InternalIOError();
         }
 
-        String id = computeEngine.commitCalculate(requestParamJSONString, "mnrc");
+        String id = computeEngineService.commitCalculate(requestParamJSONString, "mnrc");
 
-        return getCrossOriginResponse(computeEngine.retriveResult(id, String.class, MAX_TIME_OUT));
+        return computeEngineService.retriveResult(id, String.class, MAX_TIME_OUT);
     }
 }

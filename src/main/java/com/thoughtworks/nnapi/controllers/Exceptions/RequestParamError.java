@@ -1,4 +1,4 @@
-package com.thoughtworks.nnapi.Exceptions;
+package com.thoughtworks.nnapi.controllers.Exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

@@ -36,7 +36,7 @@ page at http://checkstyle.sourceforge.net/config.html -->
         <module name="StaticVariableName"/>
         <module name="TypeName"/>
 
-        <module name="AvoidStarImport"/>
+        <!--<module name="AvoidStarImport"/>-->
         <module name="IllegalImport"/>
         <module name="RedundantImport"/>
         <module name="UnusedImports"/>

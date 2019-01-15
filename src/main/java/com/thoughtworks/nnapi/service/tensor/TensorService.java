@@ -1,4 +1,4 @@
-package com.thoughtworks.nnapi.tensorbroker;
+package com.thoughtworks.nnapi.service.tensor;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +12,7 @@ public class TensorService {
     private static Map<String, Class> registedClz = new HashMap<>();
     private static final Logger LOGGER = LoggerFactory.getLogger(TensorService.class);
 
-    public static ComputeEngine getInstance(String serviceName) throws ClassNotFoundException {
+    public static ComputeEngineService getInstance(String serviceName) throws ClassNotFoundException {
 
         Class clz = registedClz.get(serviceName);
 
@@ -22,7 +22,7 @@ public class TensorService {
         }
 
         try {
-            return (ComputeEngine) clz.newInstance();
+            return (ComputeEngineService) clz.newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
             LOGGER.error(Arrays.toString(e.getStackTrace()));
             throw new ClassNotFoundException(String.format("Error while instantiation class %s", serviceName));
@@ -30,10 +30,10 @@ public class TensorService {
     }
 
     private static void regist(Class clz) throws ClassNotFoundException {
-        if (Arrays.asList(clz.getInterfaces()).contains(ComputeEngine.class)) {
+        if (Arrays.asList(clz.getInterfaces()).contains(ComputeEngineService.class)) {
             registedClz.put(clz.getName(), clz);
         } else {
-            throw new ClassNotFoundException(String.format("%s is not an implement of ComputeEngine", clz.getName()));
+            throw new ClassNotFoundException(String.format("%s is not an implement of ComputeEngineService", clz.getName()));
         }
     }
 

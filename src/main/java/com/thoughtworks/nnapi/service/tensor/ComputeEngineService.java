@@ -1,8 +1,8 @@
-package com.thoughtworks.nnapi.tensorbroker;
+package com.thoughtworks.nnapi.service.tensor;
 
 import org.springframework.amqp.core.Message;
 
-public interface ComputeEngine {
+public interface ComputeEngineService {
     /*
      * Commit calculate request and return string id
      * */

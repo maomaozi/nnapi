@@ -1,4 +1,4 @@
-package com.thoughtworks.nnapi.tensorbroker;
+package com.thoughtworks.nnapi.service.tensor;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;

@@ -1,7 +1,7 @@
-package com.thoughtworks.nnapi.amqpservice;
+package com.thoughtworks.nnapi.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.thoughtworks.nnapi.tensorbroker.ComputeEngine;
+import com.thoughtworks.nnapi.service.tensor.ComputeEngineService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.AmqpTemplate;
@@ -23,12 +23,12 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 
 @Component
-public class AmqpComputeEngine implements ComputeEngine {
+public class ComputeEngineServiceImpl implements ComputeEngineService {
 
     private static Map<String, byte[]> results = new Hashtable<>();
     private static Set<String> deniedIdx = new CopyOnWriteArraySet<>();
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AmqpComputeEngine.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ComputeEngineServiceImpl.class);
 
     @Autowired
     private AmqpTemplate template;
@@ -59,8 +59,7 @@ public class AmqpComputeEngine implements ComputeEngine {
     @RabbitListener(bindings = @QueueBinding(
             value = @Queue(value = "${amqp.queuename}", durable = "false", exclusive = "true"),
             exchange = @Exchange(value = "${amqp.queuename}")
-    )
-    )
+    ))
     public void resultCallback(Message message) {
         String correlationId = message.getMessageProperties().getCorrelationId();
 
@@ -84,7 +83,7 @@ public class AmqpComputeEngine implements ComputeEngine {
             if (data != null) {
                 break;
             }
-            // TODA: if timeout, something will leave in map forever
+
             Thread.yield();
         }
 
