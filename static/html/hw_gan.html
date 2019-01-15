@@ -59,7 +59,7 @@
             methods: {
 
                 post_request: function () {
-                    this.$http.post('http://127.0.0.1:8081/hwgan', JSON.stringify(this.noise_data)).then(
+                    this.$http.post('http://aws.mmaozi.com:8081/hwgan', JSON.stringify(this.noise_data)).then(
                         function (data) {
                             canvas = document.getElementById("canvas_1");
                             ctx = canvas.getContext("2d");
@@ -82,6 +82,13 @@
                     id = event.currentTarget.id;
                     id = parseInt(id.split("_")[1]);
                     value = event.currentTarget.value;
+
+                    if (id < 100) {
+                        this.range_noise[id].value = value;
+                    } else {
+                        this.range_indicator[id - 100].value = value;
+                    }
+
 
                     this.noise_data[id] = parseFloat(value) / 100.0;
 
