@@ -17,6 +17,11 @@
                 <button v-on:click="random_indicator">random indicator</button>
             </div>
 
+            <div style="margin-top: 5%;">
+                <button v-on:click="random_01_noise">random 0/1 noise</button>
+                <button v-on:click="random_01_indicator">random 0/1 indicator</button>
+            </div>
+
         </div>
 
         <div style="margin-left: 1%; margin-top: 1%; width: 70%; display:inline-block;vertical-align: top; ">
@@ -107,6 +112,24 @@
                 random_indicator: function random_indicator() {
                     for (let i = 0; i < 32; i++) {
                         this.noise_data[i + 100] = Math.random();
+                        this.$set(this.range_indicator[i], 'value', parseInt(this.noise_data[i + 100] * 100));
+                    }
+
+                    this.post_request();
+                },
+
+                random_01_noise: function() {
+                    for (let i = 0; i < 100; i++) {
+                        this.noise_data[i] = Math.floor(Math.random() * 2);
+                        this.$set(this.range_noise[i], 'value', parseInt(this.noise_data[i] * 100));
+                    }
+
+                    this.post_request();
+                },
+
+                random_01_indicator: function() {
+                    for (let i = 0; i < 32; i++) {
+                        this.noise_data[i + 100] = Math.floor(Math.random() * 2);
                         this.$set(this.range_indicator[i], 'value', parseInt(this.noise_data[i + 100] * 100));
                     }
 
