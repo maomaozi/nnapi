@@ -22,7 +22,7 @@ apply from: "plugin/checkstyle.gradle"
 //apply from: "plugin/jacoco.gradle"
 
 group = "com.thoughtworks.nnapi"
-version = "1.0-SNAPSHOT"
+version = System.getenv('build_version') ?: "1.0-SNAPSHOT"
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
