@@ -22,6 +22,16 @@
                 <button v-on:click="random_01_indicator">random 0/1 indicator</button>
             </div>
 
+            <div style="margin-top: 10%;">
+                Indicator determine the struct of the charactor
+                <br/>
+                <br/>
+                Noise determine the detail shape of the charactor
+                <br/>
+                <br/>
+                0/1 parameter may get better result
+            </div>
+
         </div>
 
         <div style="margin-left: 1%; margin-top: 1%; width: 70%; display:inline-block;vertical-align: top; ">
@@ -29,12 +39,12 @@
 
             <div style="border:1px solid #c3c3c3">
                 <input v-for="v in range_indicator" v-bind:id="v.id" type="range" min="0" max="100" v-bind:value="v.value"
-                    v-on:input="range_change($event)" />
+                       v-on:change="range_change($event)"/>
             </div>
 
             <div style="margin-top: 5%;border:1px solid #c3c3c3">
                 <input v-for="v in range_noise" v-bind:id="v.id" type="range" min="0" max="100" v-bind:value="v.value"
-                    v-on:input="range_change($event)" />
+                       v-on:change="range_change($event)"/>
             </div>
         </div>
 
